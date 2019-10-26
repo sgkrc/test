@@ -1,0 +1,150 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<string.h>
+#define N 20
+
+void PrintSort(int *random)
+{
+	for (int i = 0; i < N; i++)
+	{
+		printf("%d ", random[i]);
+	}
+	printf("\n\n");
+}
+void Swap(int *a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+void CreateSort(int *random)
+{
+	for (int i = 0; i < N; i++)
+	{
+		random[i] = rand() % 100 + 1;
+	}
+	PrintSort(random);
+}
+void BubbleSort(int *random)
+{
+	int *sorted = (int*)malloc(sizeof(int)*N);
+	memcpy(sorted, random, sizeof(int)*N);
+	time_t  startTime = 0, endTime = 0;
+	double gap;
+	startTime = clock();
+	for (int i = 0; i < N - 1; i++)
+	{
+		for (int j = 0; j < N - i - 1; j++)
+		{
+			if (sorted[j] > sorted[j + 1])
+				Swap(&sorted[j], &sorted[j + 1]);
+		}
+	}
+	endTime = clock();
+	gap = (double)endTime - (double)startTime / (CLOCKS_PER_SEC);
+	printf("측정시간:%f\n", gap);
+	PrintSort(sorted);
+}
+void SelectSort(int *random)
+{
+	int *sorted1 = (int*)malloc(sizeof(int)*N);
+	memcpy(sorted1, random, sizeof(int)*N);
+	time_t  startTime = 0, endTime = 0;
+	double gap;
+	startTime = clock();
+	int min;
+	for (int i = 0; i < N; i++)
+	{
+		min = i;
+		for (int j = i + 1; j < N; j++)
+		{
+			if (sorted1[j] < sorted1[min])
+				min = j;
+		}
+		if (i != min)
+			Swap(&sorted1[i], &sorted1[min]);
+	}
+	endTime = clock();
+	gap = (double)endTime - (double)startTime / (CLOCKS_PER_SEC);
+	printf("측정시간:%f\n", gap);
+	PrintSort(sorted1);
+}
+void InsertSort(int *random)
+{
+	int *sorted2 = (int*)malloc(sizeof(int)*N);
+	memcpy(sorted2, random, sizeof(int)*N);
+	time_t  startTime = 0, endTime = 0;
+	double gap;
+	startTime = clock();
+	int key, j;
+	for (int i = 1; i < N; i++)
+	{
+		key = sorted2[i];
+		for (j = i - 1; j >= 0; j--)
+		{
+			if (sorted2[j] > key)
+				sorted2[j + 1] = sorted2[j];
+			else
+				break;
+		}
+		sorted2[j + 1] = key;
+	}
+	endTime = clock();
+	gap = (double)endTime - (double)startTime / (CLOCKS_PER_SEC);
+	printf("측정시간:%f\n", gap);
+	PrintSort(sorted2);
+}
+void ShellSort(int *random, int size)
+{
+	int *sorted3 = (int*)malloc(sizeof(int)*N);
+	memcpy(sorted3, random, sizeof(int)*N);
+	time_t  startTime = 0, endTime = 0;
+	double gap;
+	startTime = clock();
+	for (int k = size / 2; k > 0; k /= 2)
+	{
+		int keyvalue, j;
+		if (k % 2 == 0)
+			k++;
+		printf("k=%d\n", k);
+		for (int i = k; i < size; i++)
+		{
+			keyvalue = sorted3[i];
+			for (j = i - k; j >= 0; j -= k)
+			{
+				if (sorted3[j] > keyvalue)
+					sorted3[j + k] = sorted3[j];
+				else
+					break;
+			}
+			sorted3[j + k] = keyvalue;
+		}
+		PrintSort(sorted3);
+		printf("\n");
+	}
+	endTime = clock();
+	gap = (double)endTime - (double)startTime / (CLOCKS_PER_SEC);
+	printf("측정시간:%f\n", gap);
+	PrintSort(sorted3);
+}
+int main()
+{
+	srand(time(NULL));
+	int random[N];
+	int size = N;
+	printf("무작위 수 20개 생성\n");
+	CreateSort(random);
+
+	printf("버블 정렬\n\n");
+	BubbleSort(random);
+
+	printf("선택 정렬\n\n");
+	SelectSort(random);
+
+	printf("삽입 정렬\n\n");
+	InsertSort(random);
+
+	printf("쉘 정렬\n\n");
+	ShellSort(random, size);
+}
