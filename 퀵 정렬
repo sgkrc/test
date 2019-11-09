@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void Swap(int* a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+int partition(int* arr, int left, int right) {
+	int pivot, low, high;
+
+	low = left;//do while문을 사용하기 때문에 일단은 무조건 한번 실행됨. 따라서left-1이 아니라 left가 된다.
+	high = right + 1;//do while문을 사용하기 때문에 일단은 무조건 한번 실행됨. 따라서 right이 아닌 right+1이 된다.
+	pivot = arr[left];//한번 돌 때마다 pivot값은 무조건 자기 자리를 찾아간다.
+
+	do {
+		do {
+			low++;
+		} //while (low <= right && arr[low] < pivot);
+		while (arr[low] < pivot);//low값이 pivot값보다 클 때까지 실핼
+
+		do {
+			high--;
+		} //while (high >= left && arr[high] > pivot);
+		while (arr[high] > pivot);//high값이 pivot값보다 작을 때까지 실행
+
+		if (low < high) {//(index number)로 low값이 high값보다 작을 때
+			Swap(&arr[low], &arr[high]);//두 개의 index number 주소값을 교환
+		}
+	} while (low < high);
+
+	Swap(&arr[left], &arr[high]);//(index number로)low값이 high값보다 클 경우 (index number의 주소값으로)pivot값과 high값을 교한한다.
+
+	return high;
+}
+void QuickSort(int* arr, int left, int right) {
+
+	if (left < right) {
+		int q = partition(arr, left, right);//high의 index number값이 리턴
+		QuickSort(arr, left, q - 1);//q값 앞의 정렬들을 다시 퀵정렬->완전히 정렬될 때까지
+		QuickSort(arr, q + 1, right);//q값 뒤의 정렬들을 다시 퀵정렬->완전히 정렬될 때까지
+	}
+}
+void PrintArr(int* arr, int size)
+{
+	for (int i = 0; i < size; i++)
+		printf("%d ", arr[i]);
+	printf("\n");
+}
+int* CreateArr(int size, int range)
+{
+	int* arr = (int*)malloc(sizeof(int)*size);
+	for (int i = 0; i < size; i++)
+		arr[i] = rand() % range + 1;
+	return arr;
+}
+int main()
+{
+	int size = 10;
+	int range = 100;
+	srand(time(NULL));
+	int* arr = CreateArr(size, range);
+	PrintArr(arr, size);
+	QuickSort(arr, 0, size - 1);
+	PrintArr(arr, size);
+	return 0;
+}
+/*
+퀵 정렬 과정
+6 7 2 4 9 10
+p l       h
+p l   h
+6 4 2 7 9 10
+p   h l
+2 4 6 7 9 10
+*/
